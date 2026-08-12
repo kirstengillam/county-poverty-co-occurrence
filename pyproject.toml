@@ -1,0 +1,27 @@
+[project]
+name = "cpco"
+version = "0.1.0"
+description = "County-level poverty co-occurrence dashboard ETL pipeline"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas",
+    "geopandas",
+    "rasterstats",
+    "shapely",
+    "sqlalchemy",
+    "psycopg2-binary",
+    "python-dotenv",
+    "requests",
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

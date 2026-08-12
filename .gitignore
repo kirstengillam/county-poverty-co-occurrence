@@ -31,9 +31,12 @@ env/
 htmlcov/
 
 # --- Data (raw/intermediate downloads and geospatial outputs are large and reproducible via ETL) ---
-data/raw/
-data/interim/
-data/processed/
+data/raw/*
+data/interim/*
+data/processed/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
 *.tif
 *.tiff
 *.shp
@@ -62,6 +65,7 @@ grafana-data/
 # --- IDE ---
 .idea/
 .vscode/
+.claude/
 
 # --- OS ---
 .DS_Store
