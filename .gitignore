@@ -1,0 +1,68 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.python-version
+
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Testing / linting / type-checking caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Data (raw/intermediate downloads and geospatial outputs are large and reproducible via ETL) ---
+data/raw/
+data/interim/
+data/processed/
+*.tif
+*.tiff
+*.shp
+*.shx
+*.dbf
+*.prj
+*.gpkg
+*.geojson
+!county-boundaries.geojson
+*.parquet
+*.zip
+
+# --- Database ---
+*.sqlite3
+*.db
+pgdata/
+
+# --- Logs ---
+*.log
+logs/
+
+# --- OpenTelemetry / Grafana local state ---
+.otel-collector/
+grafana-data/
+
+# --- IDE ---
+.idea/
+.vscode/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
