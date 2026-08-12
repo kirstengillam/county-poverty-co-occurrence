@@ -1,6 +1,6 @@
 # County Poverty Co-Occurrence Dashboard
 
-See [project.md](project.md) for the full project brief, dataset list, and build sequence.
+🚧 **Work in progress.** SAIPE (poverty rate + median household income) and county boundaries are live end-to-end, from fetch through Postgres/GeoJSON, and the pipeline is instrumented with OpenTelemetry. Still to build: the Grafana Geomap dashboard itself and the remaining datasets (LAUS, Eviction Lab, Food Access, Vulcan CO2). See [project.md](project.md) for the full brief, dataset list, and build sequence — the steps below reflect what's actually implemented today.
 
 ## Layout
 
