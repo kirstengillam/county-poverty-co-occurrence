@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-from cpco.db.load import init_schema, upsert_metrics
+from cpco.db.load import init_schema, upsert_counties, upsert_metrics
 
 
 def test_init_schema_and_upsert():
@@ -28,3 +28,23 @@ def test_init_schema_and_upsert():
     with engine.connect() as conn:
         value = conn.execute(text("SELECT value FROM county_metrics WHERE fips = '06001'")).scalar()
     assert value == 11.5
+
+
+def test_upsert_counties():
+    engine = create_engine("sqlite:///:memory:")
+    init_schema(engine)
+
+    df = pd.DataFrame(
+        [
+            {"fips": "06001", "name": "Alameda", "lat": 37.6017, "lon": -121.7195},
+            {"fips": "06003", "name": "Alpine", "lat": 38.5971, "lon": -119.7896},
+        ]
+    )
+    upsert_counties(df, engine)
+
+    with engine.connect() as conn:
+        rows = conn.execute(text("SELECT fips, name, lat, lon FROM counties ORDER BY fips")).fetchall()
+    assert rows == [
+        ("06001", "Alameda", 37.6017, -121.7195),
+        ("06003", "Alpine", 38.5971, -119.7896),
+    ]

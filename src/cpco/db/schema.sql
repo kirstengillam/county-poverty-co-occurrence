@@ -7,3 +7,11 @@ CREATE TABLE IF NOT EXISTS county_metrics (
     source TEXT NOT NULL,
     PRIMARY KEY (fips, metric, year)
 );
+
+-- One row per county, for joining metrics to a map point (TIGER/Line internal point).
+CREATE TABLE IF NOT EXISTS counties (
+    fips CHAR(5) PRIMARY KEY,
+    name TEXT NOT NULL,
+    lat DOUBLE PRECISION NOT NULL,
+    lon DOUBLE PRECISION NOT NULL
+);

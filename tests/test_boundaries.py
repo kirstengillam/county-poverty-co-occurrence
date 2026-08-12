@@ -12,6 +12,8 @@ def _fake_counties() -> gpd.GeoDataFrame:
             "STATEFP": ["06", "06", "04"],
             "GEOID": ["06001", "06003", "04001"],
             "NAME": ["Alameda", "Alpine", "Apache"],
+            "INTPTLAT": ["+37.6017", "+38.5971", "+34.0489"],
+            "INTPTLON": ["-121.7195", "-119.7896", "-109.4936"],
             "geometry": [Polygon([(0, 0), (1, 0), (1, 1)])] * 3,
         },
         crs="EPSG:4269",
@@ -25,8 +27,11 @@ def test_fetch_filters_to_state_and_renames_columns(tmp_path, monkeypatch):
     with patch("cpco.etl.boundaries.gpd.read_file", return_value=_fake_counties()):
         gdf = boundaries.fetch(state_fips="06")
 
-    assert list(gdf.columns) == ["fips", "name", "geometry"]
+    assert list(gdf.columns) == ["fips", "name", "lat", "lon", "geometry"]
     assert set(gdf["fips"]) == {"06001", "06003"}
+    alameda = gdf[gdf["fips"] == "06001"].iloc[0]
+    assert alameda["lat"] == 37.6017
+    assert alameda["lon"] == -121.7195
 
 
 def test_to_geojson_reprojects_to_wgs84(tmp_path):

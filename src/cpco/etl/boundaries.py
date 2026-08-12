@@ -27,7 +27,10 @@ def fetch(state_fips: str, year: int = 2023) -> gpd.GeoDataFrame:
         counties = gpd.read_file(zip_path)
         state_counties = counties[counties["STATEFP"] == state_fips]
 
-        result = state_counties.rename(columns={"GEOID": "fips", "NAME": "name"})[["fips", "name", "geometry"]]
+        result = state_counties.rename(columns={"GEOID": "fips", "NAME": "name"})
+        result["lat"] = result["INTPTLAT"].astype(float)
+        result["lon"] = result["INTPTLON"].astype(float)
+        result = result[["fips", "name", "lat", "lon", "geometry"]]
         span.set_attribute("row_count", len(result))
         return result
 
