@@ -25,7 +25,7 @@ cp .env.example .env
 
 Then fill in `.env`:
 
-- `DATABASE_URL` — defaults to `postgresql://localhost:5432/cpco`; point it at your local Postgres
+- `DATABASE_URL` — defaults to `postgresql://localhost:5432/cpco`; point it at your Postgres instance. This project uses [Neon](https://neon.tech)'s free tier — its connection string includes `?sslmode=require`, which SQLAlchemy/psycopg2 handle natively.
 - `TARGET_STATE_FIPS` — 2-digit state FIPS code for the state/region in scope (e.g. `06` for California)
 - `CENSUS_API_KEY` — required by the SAIPE fetch; register at [api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html) and activate via the confirmation email before use
 
@@ -47,7 +47,18 @@ So far, only the SAIPE (poverty rate + median household income) step is wired up
 python scripts/run_saipe.py
 ```
 
-This creates the `county_metrics` table if it doesn't exist and loads one row per county per metric for `TARGET_STATE_FIPS`. Safe to rerun — it upserts rather than duplicating rows.
+This creates the `county_metrics` table if it doesn't exist and loads one row per county per metric for `TARGET_STATE_FIPS`. Safe to rerun — it upserts rather than duplicating rows. It prints a `Loaded N rows for state ...` line on success (confirmed against Neon: 116 rows for CA — 58 counties x 2 metrics).
+
+To independently verify what landed in the table:
+
+```bash
+python -c "
+from cpco.db.connection import get_engine
+from sqlalchemy import text
+with get_engine().connect() as conn:
+    print(conn.execute(text('SELECT COUNT(*) FROM county_metrics')).scalar())
+"
+```
 
 County boundaries (TIGER/Line, converted to GeoJSON for Grafana Geomap) are also wired up:
 
