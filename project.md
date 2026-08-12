@@ -15,6 +15,7 @@ An interactive county-level map that overlays several public datasets often disc
 - Start with **one state or metro region**, not the full country. Widen later if the pipeline holds up.
 - Get **one layer working end-to-end** (recommend poverty rate, since it's the backbone dataset and needs no aggregation) before adding the others.
 - Treat the two datasets that need aggregation (Food Access Research Atlas, Vulcan CO2) as the hardest part of the project and budget time accordingly.
+- **County is the baseline granularity for v1.** Finer-grained display (e.g. showing Food Access at its native census-tract resolution instead of rolling it up) is desired as a **second pass**, once the county-level pipeline is working end-to-end — not before. Would require a `geo_level` column on the metrics table, a second (tract) boundaries GeoJSON, and a second Grafana Geomap layer per applicable dataset.
 
 ## Datasets
 
