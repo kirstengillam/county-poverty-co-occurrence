@@ -4,7 +4,7 @@ See [project.md](project.md) for the full project brief, dataset list, and build
 
 ## Layout
 
-- `src/cpco/etl/` — one fetcher per data source (SAIPE, LAUS, Eviction Lab, Food Access Atlas, Vulcan CO2, TIGER/Line boundaries). Only SAIPE is implemented so far; the rest are stubs.
+- `src/cpco/etl/` — one fetcher per data source (SAIPE, LAUS, Eviction Lab, Food Access Atlas, Vulcan CO2, TIGER/Line boundaries). SAIPE and boundaries are implemented; LAUS, Eviction Lab, Food Access, and Vulcan CO2 are still stubs.
 - `src/cpco/db/` — Postgres connection, schema (`county_metrics`, keyed by FIPS), and load/upsert helpers
 - `src/cpco/telemetry/` — OpenTelemetry tracer setup, exported to Grafana Cloud
 - `scripts/` — runnable entrypoints tying ETL + DB load together, one per dataset
@@ -48,3 +48,11 @@ python scripts/run_saipe.py
 ```
 
 This creates the `county_metrics` table if it doesn't exist and loads one row per county per metric for `TARGET_STATE_FIPS`. Safe to rerun — it upserts rather than duplicating rows.
+
+County boundaries (TIGER/Line, converted to GeoJSON for Grafana Geomap) are also wired up:
+
+```bash
+python scripts/run_boundaries.py
+```
+
+This downloads the national TIGER/Line county file (~80MB, cached in `data/raw/` after the first run), filters to `TARGET_STATE_FIPS`, and writes `boundaries/county-boundaries.geojson`.
