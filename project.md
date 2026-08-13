@@ -48,6 +48,16 @@ An interactive county-level map that overlays several public datasets often disc
 6. Instrument the pipeline with OpenTelemetry, exporting to Grafana Cloud.
 7. Build the Grafana Geomap dashboard, starting with a single layer (poverty rate) before adding the rest.
 
+## Known Issues / Revisit Later
+
+**Grafana Geomap's "Dynamic GeoJSON (Alpha)" layer — abandoned for now, 2026-08-13.** This layer type would have given a true choropleth (county polygons filled/colored live from a SQL query, joined on `fips`) without needing to bake values into the GeoJSON file. It's gated behind a server-side `enable_alpha` flag not exposed to Grafana Cloud users by default — had to email Grafana support to get it turned on for this stack.
+
+Once enabled, configured it fully per the docs: GeoJSON URL pointed at the raw GitHub URL for `boundaries/county-boundaries.geojson`, ID Field set to `fips` (matching the GeoJSON's `fips` property), Data style Color field bound to `poverty_rate`, and panel Standard options Color scheme set to a "by value" gradient (Yellow-Red). Independently verified via Query Inspector that the underlying query was returning correctly-typed, zero-padded `fips` strings (e.g. `"06001"`) and `poverty_rate` values. Despite every setting being correct, the layer consistently rendered every county in the flat "Default style" color instead of the data-driven gradient — meaning the query-to-GeoJSON join wasn't actually happening at render time. This matches several Grafana community forum threads describing this specific layer as underdocumented and inconsistent in alpha.
+
+**Fallback adopted instead:** bake the current metric value directly into `county-boundaries.geojson` as a static property (regenerated whenever the underlying data changes), and use the standard, stable (non-alpha) GeoJSON layer with manual style rules based on value thresholds. Less elegant — no live gradient, no automatic update when Postgres data changes — but reliable.
+
+**Worth revisiting:** if/when Dynamic GeoJSON graduates out of alpha (or gets better documented), it's the better long-term approach — swap back to a live query-driven choropleth instead of regenerating a static file.
+
 ## Resume/Portfolio Framing (for later)
 
 Once built, this should support an honest bullet along the lines of: *"Built a county-level geospatial dashboard combining five public datasets (poverty, unemployment, eviction, food access, and CO2 emissions), including raster-to-polygon aggregation via zonal statistics; instrumented the ETL pipeline with OpenTelemetry and visualized via Grafana Geomap."* Keep the framing to "co-occurrence" rather than "effects of poverty" in any write-up or interview description.
