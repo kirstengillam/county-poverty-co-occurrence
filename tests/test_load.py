@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-from cpco.db.load import init_schema, upsert_counties, upsert_metrics
+from cpco.db.load import fetch_metrics_wide, init_schema, upsert_counties, upsert_metrics
 
 
 def test_init_schema_and_upsert():
@@ -48,3 +48,31 @@ def test_upsert_counties():
         ("06001", "Alameda", 37.6017, -121.7195),
         ("06003", "Alpine", 38.5971, -119.7896),
     ]
+
+
+def test_fetch_metrics_wide_pivots_metric_to_columns():
+    engine = create_engine("sqlite:///:memory:")
+    init_schema(engine)
+
+    df = pd.DataFrame(
+        [
+            {"fips": "06001", "metric": "poverty_rate", "year": 2022, "value": 10.1, "source": "census_saipe"},
+            {
+                "fips": "06001",
+                "metric": "median_household_income",
+                "year": 2022,
+                "value": 121190.0,
+                "source": "census_saipe",
+            },
+            {"fips": "06003", "metric": "poverty_rate", "year": 2022, "value": 16.3, "source": "census_saipe"},
+            {"fips": "06001", "metric": "poverty_rate", "year": 2021, "value": 9.5, "source": "census_saipe"},
+        ]
+    )
+    upsert_metrics(df, engine)
+
+    wide = fetch_metrics_wide(engine, year=2022).set_index("fips")
+
+    assert set(wide.columns) == {"poverty_rate", "median_household_income"}
+    assert wide.loc["06001", "poverty_rate"] == 10.1
+    assert wide.loc["06001", "median_household_income"] == 121190.0
+    assert pd.isna(wide.loc["06003", "median_household_income"])

@@ -47,3 +47,15 @@ def upsert_counties(df: pd.DataFrame, engine: Engine) -> None:
     with tracer.start_as_current_span("db.upsert_counties", attributes={"row_count": len(df)}):
         with engine.begin() as conn:
             conn.execute(UPSERT_COUNTIES_SQL, df[["fips", "name", "lat", "lon"]].to_dict(orient="records"))
+
+
+def fetch_metrics_wide(engine: Engine, year: int) -> pd.DataFrame:
+    """One row per fips, one column per metric, for the given year."""
+    with tracer.start_as_current_span("db.fetch_metrics_wide", attributes={"year": year}):
+        with engine.connect() as conn:
+            long_df = pd.read_sql(
+                text("SELECT fips, metric, value FROM county_metrics WHERE year = :year"),
+                conn,
+                params={"year": year},
+            )
+        return long_df.pivot(index="fips", columns="metric", values="value").reset_index()
