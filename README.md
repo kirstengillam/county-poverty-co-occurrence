@@ -10,7 +10,8 @@
 - `scripts/` — runnable entrypoints tying ETL + DB load together, one per dataset
 - `data/raw/`, `data/interim/`, `data/processed/` — ETL working directories (gitignored)
 - `boundaries/` — final county-boundaries GeoJSON served to Grafana Geomap
-- `grafana/dashboards/`, `grafana/provisioning/` — Geomap dashboard definitions
+- `grafana/dashboards/` — exported JSON snapshot of the live Grafana Cloud dashboard, kept as a version-controlled reference (Grafana Cloud is managed, so this isn't auto-provisioned — re-export manually after UI changes; see `grafana/dashboards/README.md`)
+- `grafana/provisioning/` — reserved for future dashboard-as-code automation (e.g. Terraform), currently unused
 
 ## Setup
 
