@@ -6,7 +6,9 @@ from cpco.db.load import fetch_metrics_wide, init_schema, upsert_counties
 from cpco.etl import boundaries
 from cpco.telemetry.otel import configure_tracing
 
-OUT_PATH = Path(__file__).resolve().parents[1] / "boundaries" / "county-boundaries.geojson"
+BOUNDARIES_DIR = Path(__file__).resolve().parents[1] / "boundaries"
+PLAIN_OUT_PATH = BOUNDARIES_DIR / "county-boundaries-plain.geojson"
+BAKED_OUT_PATH = BOUNDARIES_DIR / "county-boundaries.geojson"
 
 tracer = configure_tracing()
 
@@ -22,14 +24,18 @@ def main(year: int = 2022) -> None:
         upsert_counties(gdf, engine)
         print(f"Loaded {len(gdf)} county centroids for state {TARGET_STATE_FIPS} into Postgres")
 
-        metrics_df = fetch_metrics_wide(engine, year=year)
-        gdf = gdf.merge(metrics_df, on="fips", how="left")
+        PLAIN_OUT_PATH.unlink(missing_ok=True)
+        boundaries.to_geojson(gdf, str(PLAIN_OUT_PATH))
+        print(f"Wrote {len(gdf)} plain county boundaries (no baked values) to {PLAIN_OUT_PATH}")
 
-        OUT_PATH.unlink(missing_ok=True)
-        boundaries.to_geojson(gdf, str(OUT_PATH))
+        metrics_df = fetch_metrics_wide(engine, year=year)
+        gdf_baked = gdf.merge(metrics_df, on="fips", how="left")
+
+        BAKED_OUT_PATH.unlink(missing_ok=True)
+        boundaries.to_geojson(gdf_baked, str(BAKED_OUT_PATH))
         print(
-            f"Wrote {len(gdf)} county boundaries for state {TARGET_STATE_FIPS} "
-            f"(with {year} metric values baked in) to {OUT_PATH}"
+            f"Wrote {len(gdf_baked)} county boundaries for state {TARGET_STATE_FIPS} "
+            f"(with {year} metric values baked in) to {BAKED_OUT_PATH}"
         )
 
 

@@ -46,6 +46,7 @@ data/processed/*
 *.gpkg
 *.geojson
 !county-boundaries.geojson
+!county-boundaries-plain.geojson
 *.parquet
 *.zip
 
