@@ -43,13 +43,22 @@ Tests run against an in-memory SQLite engine, so they don't need Postgres.
 
 ## Running the pipeline
 
-So far, only the SAIPE (poverty rate + median household income) step is wired up end-to-end: fetch from the Census API, then upsert into Postgres keyed by `(fips, metric, year)`.
+Two datasets are wired up end-to-end so far: SAIPE (poverty rate + median household income) and LAUS (unemployment rate). Both fetch from their source API and upsert into Postgres keyed by `(fips, metric, year)`. Boundaries (TIGER/Line, converted to GeoJSON for Grafana Geomap) ties them together — it populates the `counties` table other scripts depend on, and bakes whatever's currently in `county_metrics` into the GeoJSON Grafana reads.
+
+**Run order matters.** `run_boundaries.py` needs to run once before `run_laus.py` (to populate `counties`), and again after any metrics script to refresh the baked GeoJSON with the latest values — Grafana reads the static file, not Postgres directly, so nothing shows up on the dashboard until you re-bake:
 
 ```bash
-python scripts/run_saipe.py
+python scripts/run_boundaries.py   # 1. bootstrap counties table + plain GeoJSON
+python scripts/run_saipe.py        # 2. load poverty_rate, median_household_income
+python scripts/run_laus.py         # 3. load unemployment_rate (needs counties table from step 1)
+python scripts/run_boundaries.py   # 4. re-run to bake all current metric values into the GeoJSON
 ```
 
-This creates the `county_metrics` table if it doesn't exist and loads one row per county per metric for `TARGET_STATE_FIPS`. Safe to rerun — it upserts rather than duplicating rows. It prints a `Loaded N rows for state ...` line on success (confirmed against Neon: 116 rows for CA — 58 counties x 2 metrics).
+- `run_saipe.py` — creates the `county_metrics` table if it doesn't exist and loads one row per county per metric for `TARGET_STATE_FIPS`. Prints `Loaded N rows for state ...` on success (confirmed against Neon: 116 rows for CA — 58 counties x 2 metrics).
+- `run_laus.py` — queries the BLS API for the annual-average unemployment rate for every county in the `counties` table (one BLS series ID per county, batched to stay under the API's 50-series-per-request limit) and upserts into `county_metrics`. Confirmed against Neon: 58 rows for CA.
+- `run_boundaries.py` — downloads the national TIGER/Line county file (~80MB, cached in `data/raw/` after the first run), filters to `TARGET_STATE_FIPS`, upserts county centroids into the `counties` table, and writes both `boundaries/county-boundaries-plain.geojson` (no metric values) and `boundaries/county-boundaries.geojson` (current metric values baked in as feature properties).
+
+All scripts are safe to rerun — they upsert rather than duplicate rows.
 
 To independently verify what landed in the table:
 
@@ -62,18 +71,12 @@ with get_engine().connect() as conn:
 "
 ```
 
-County boundaries (TIGER/Line, converted to GeoJSON for Grafana Geomap) are also wired up:
+### Adding a new dataset
 
-```bash
-python scripts/run_boundaries.py
-```
+SAIPE and LAUS are both county-direct (no aggregation needed), so they're the template for the next easy dataset (Eviction Lab). Food Access Atlas and Vulcan CO2 need tract→county or raster→county aggregation first — see `project.md`'s Architecture section — but land in Postgres the same way once aggregated. The pattern:
 
-This downloads the national TIGER/Line county file (~80MB, cached in `data/raw/` after the first run), filters to `TARGET_STATE_FIPS`, and writes `boundaries/county-boundaries.geojson`. Run this before `run_laus.py` — it's what populates the `counties` table that `run_laus.py` reads the county FIPS list from.
-
-LAUS (unemployment rate) is also wired up:
-
-```bash
-python scripts/run_laus.py
-```
-
-This queries the BLS API for the annual-average unemployment rate for every county in the `counties` table (built via one BLS series ID per county, batched to stay under the API's 50-series-per-request limit) and upserts into `county_metrics`.
+1. Implement `fetch(...)` in `src/cpco/etl/<dataset>.py`, returning a `DataFrame` with columns `fips, metric, year, value, source` (see `saipe.py` or `laus.py`).
+2. Write `tests/test_<dataset>.py` mocking the HTTP call, asserting the returned frame's shape and a couple of values (see `tests/test_laus.py`).
+3. Add `scripts/run_<dataset>.py` that calls `init_schema`, the new `fetch(...)`, then `upsert_metrics(df, engine)` — copy `run_laus.py` as a starting point.
+4. Add any new required env var (API key, etc.) to `.env.example` and this README's Setup section.
+5. Re-run `python scripts/run_boundaries.py` afterward to bake the new metric into the GeoJSON.
