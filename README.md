@@ -1,5 +1,7 @@
 # County Poverty Co-Occurrence Dashboard
 
+[![CI](https://github.com/kirstengillam/county-poverty-co-occurrence/actions/workflows/ci.yml/badge.svg)](https://github.com/kirstengillam/county-poverty-co-occurrence/actions/workflows/ci.yml)
+
 ✅ **Feature-complete per `project.md`'s build sequence.** All five datasets — SAIPE (poverty rate + median household income), LAUS (unemployment rate), Eviction Lab (eviction filing rate), Food Access Atlas (food desert population share), and Vulcan CO2 (total emissions) — plus county boundaries are live end-to-end, from fetch through Postgres/GeoJSON, and the pipeline is instrumented with OpenTelemetry. All five have a Grafana Geomap panel. See [project.md](project.md) for the full brief, dataset list, and any open items in its Known Issues section — the steps below reflect what's actually implemented today.
 
 ## Layout
@@ -45,7 +47,7 @@ No env var is needed for Vulcan CO2 — its [Zenodo record](https://zenodo.org/r
 pytest
 ```
 
-Tests run against an in-memory SQLite engine, so they don't need Postgres.
+Tests run against an in-memory SQLite engine, so they don't need Postgres. `.github/workflows/ci.yml` runs the same suite on every push/PR to `main`.
 
 ## Running the pipeline
 
