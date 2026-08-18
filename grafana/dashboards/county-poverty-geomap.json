@@ -5,8 +5,8 @@
     "name": "kixs4xh",
     "namespace": "stacks-1773172",
     "uid": "748fb2f0-7f5e-46be-b346-5c94b15a29c4",
-    "resourceVersion": "2089795101846458368",
-    "generation": 7,
+    "resourceVersion": "2089804008188723200",
+    "generation": 13,
     "creationTimestamp": "2026-08-12T17:41:24Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "2428692632035328"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:dfux3r7oevfuob",
       "grafana.app/saved-from-ui": "Grafana Cloud",
       "grafana.app/updatedBy": "user:dfux3r7oevfuob",
-      "grafana.app/updatedTimestamp": "2026-08-18T19:22:33Z"
+      "grafana.app/updatedTimestamp": "2026-08-18T19:57:56Z"
     }
   },
   "spec": {
@@ -351,7 +351,7 @@
                         "editorMode": "code",
                         "format": "table",
                         "rawQuery": true,
-                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS poverty_rate\nFROM counties c\nJOIN county_metrics m ON m.fips = c.fips\nWHERE m.metric = 'poverty_rate' AND m.year = 2022",
+                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS unemployment_rate\nFROM counties c\nJOIN county_metrics m ON m.fips = c.fips\nWHERE m.metric = 'unemployment_rate' AND m.year = 2022",
                         "sql": {
                           "columns": [
                             {
@@ -606,6 +606,288 @@
             }
           }
         }
+      },
+      "panel-3": {
+        "kind": "Panel",
+        "spec": {
+          "id": 3,
+          "title": "Eviction Rate by County (CA, 2017)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffuz9ssbn8um8e"
+                      },
+                      "spec": {
+                        "dataset": "neondb",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS eviction_filing_rate\nFROM counties c\nJOIN county_metrics m ON m.fips = c.fips\nWHERE m.metric = 'eviction_filing_rate' AND m.year = 2017",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "geomap",
+            "version": "13.2.0-31683987170",
+            "spec": {
+              "options": {
+                "basemap": {
+                  "config": {},
+                  "name": "Layer 0",
+                  "noRepeat": false,
+                  "type": "default"
+                },
+                "controls": {
+                  "mouseWheelZoom": true,
+                  "showAttribution": true,
+                  "showDebug": false,
+                  "showMeasure": false,
+                  "showScale": false,
+                  "showZoom": true
+                },
+                "layers": [
+                  {
+                    "config": {
+                      "rules": [
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "eviction_filing_rate",
+                            "value": 3.5
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#C4162A"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "eviction_filing_rate",
+                            "value": 2.5
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#FA6400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "eviction_filing_rate",
+                            "value": 1.5
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#E0B400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        }
+                      ],
+                      "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries.geojson",
+                      "style": {
+                        "color": {
+                          "fixed": "#FFF899"
+                        },
+                        "opacity": 0.7,
+                        "rotation": {
+                          "fixed": 0,
+                          "max": 360,
+                          "min": -360,
+                          "mode": "mod"
+                        },
+                        "size": {
+                          "fixed": 5,
+                          "max": 15,
+                          "min": 2
+                        },
+                        "symbol": {
+                          "fixed": "img/icons/marker/circle.svg",
+                          "mode": "fixed"
+                        },
+                        "symbolAlign": {
+                          "horizontal": "center",
+                          "vertical": "center"
+                        },
+                        "textConfig": {
+                          "fontSize": 12,
+                          "offsetX": 0,
+                          "offsetY": 0,
+                          "textAlign": "center",
+                          "textBaseline": "middle"
+                        }
+                      }
+                    },
+                    "location": {
+                      "latitude": "lat",
+                      "longitude": "lon",
+                      "mode": "coords"
+                    },
+                    "name": "Layer 1",
+                    "tooltip": true,
+                    "type": "geojson"
+                  }
+                ],
+                "tooltip": {
+                  "mode": "details"
+                },
+                "view": {
+                  "allLayers": true,
+                  "dashboardVariable": false,
+                  "id": "coords",
+                  "lat": 37.462828,
+                  "lon": -118.539906,
+                  "noRepeat": false,
+                  "zoom": 4.85
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
       }
     },
     "layout": {
@@ -622,6 +904,19 @@
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-1"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-3"
               }
             }
           },
