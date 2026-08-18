@@ -1,0 +1,1553 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "",
+    "namespace": "stacks-1773172",
+    "uid": "",
+    "generation": 1
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "datasource": {
+              "name": "-- Grafana --"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true
+        }
+      }
+    ],
+    "cursorSync": "Off",
+    "editable": true,
+    "elements": {
+      "panel-1": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1,
+          "title": "Poverty Rate by County (US, 2022)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffuz9ssbn8um8e"
+                      },
+                      "spec": {
+                        "dataset": "neondb",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS poverty_rate\nFROM counties c\nJOIN county_metrics m ON m.fips = c.fips\nWHERE m.metric = 'poverty_rate' AND m.year = 2022",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "geomap",
+            "version": "13.2.0-31683987170",
+            "spec": {
+              "options": {
+                "basemap": {
+                  "config": {},
+                  "name": "Layer 0",
+                  "noRepeat": false,
+                  "type": "default"
+                },
+                "controls": {
+                  "mouseWheelZoom": true,
+                  "showAttribution": true,
+                  "showDebug": false,
+                  "showMeasure": false,
+                  "showScale": false,
+                  "showZoom": true
+                },
+                "layers": [
+                  {
+                    "config": {
+                      "rules": [
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "poverty_rate",
+                            "value": 20
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#C4162A"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "poverty_rate",
+                            "value": 15
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#FA6400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "poverty_rate",
+                            "value": 10
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#E0B400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        }
+                      ],
+                      "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries-us.geojson",
+                      "style": {
+                        "color": {
+                          "fixed": "#ccccdc"
+                        },
+                        "opacity": 0.7,
+                        "rotation": {
+                          "fixed": 0,
+                          "max": 360,
+                          "min": -360,
+                          "mode": "mod"
+                        },
+                        "size": {
+                          "fixed": 5,
+                          "max": 15,
+                          "min": 2
+                        },
+                        "symbol": {
+                          "fixed": "img/icons/marker/circle.svg",
+                          "mode": "fixed"
+                        },
+                        "symbolAlign": {
+                          "horizontal": "center",
+                          "vertical": "center"
+                        },
+                        "textConfig": {
+                          "fontSize": 12,
+                          "offsetX": 0,
+                          "offsetY": 0,
+                          "textAlign": "center",
+                          "textBaseline": "middle"
+                        }
+                      }
+                    },
+                    "location": {
+                      "latitude": "lat",
+                      "longitude": "lon",
+                      "mode": "coords"
+                    },
+                    "name": "Layer 1",
+                    "tooltip": true,
+                    "type": "geojson"
+                  }
+                ],
+                "tooltip": {
+                  "mode": "details"
+                },
+                "view": {
+                  "allLayers": true,
+                  "dashboardVariable": false,
+                  "id": "coords",
+                  "lat": 39.5,
+                  "lon": -98.35,
+                  "noRepeat": false,
+                  "zoom": 3.8
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "Unemployment Rate by County (US, 2022)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffuz9ssbn8um8e"
+                      },
+                      "spec": {
+                        "dataset": "neondb",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS unemployment_rate\nFROM counties c\nJOIN county_metrics m ON m.fips = c.fips\nWHERE m.metric = 'unemployment_rate' AND m.year = 2022",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "geomap",
+            "version": "13.2.0-31683987170",
+            "spec": {
+              "options": {
+                "basemap": {
+                  "config": {},
+                  "name": "Layer 0",
+                  "noRepeat": false,
+                  "type": "default"
+                },
+                "controls": {
+                  "mouseWheelZoom": true,
+                  "showAttribution": true,
+                  "showDebug": false,
+                  "showMeasure": false,
+                  "showScale": false,
+                  "showZoom": true
+                },
+                "layers": [
+                  {
+                    "config": {
+                      "rules": [
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "unemployment_rate",
+                            "value": 10
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#C4162A"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "unemployment_rate",
+                            "value": 7
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#FA6400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "unemployment_rate",
+                            "value": 4
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#E0B400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        }
+                      ],
+                      "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries-us.geojson",
+                      "style": {
+                        "color": {
+                          "fixed": "#ccccdc"
+                        },
+                        "opacity": 0.7,
+                        "rotation": {
+                          "fixed": 0,
+                          "max": 360,
+                          "min": -360,
+                          "mode": "mod"
+                        },
+                        "size": {
+                          "fixed": 5,
+                          "max": 15,
+                          "min": 2
+                        },
+                        "symbol": {
+                          "fixed": "img/icons/marker/circle.svg",
+                          "mode": "fixed"
+                        },
+                        "symbolAlign": {
+                          "horizontal": "center",
+                          "vertical": "center"
+                        },
+                        "textConfig": {
+                          "fontSize": 12,
+                          "offsetX": 0,
+                          "offsetY": 0,
+                          "textAlign": "center",
+                          "textBaseline": "middle"
+                        }
+                      }
+                    },
+                    "location": {
+                      "latitude": "lat",
+                      "longitude": "lon",
+                      "mode": "coords"
+                    },
+                    "name": "Layer 1",
+                    "tooltip": true,
+                    "type": "geojson"
+                  }
+                ],
+                "tooltip": {
+                  "mode": "details"
+                },
+                "view": {
+                  "allLayers": true,
+                  "dashboardVariable": false,
+                  "id": "coords",
+                  "lat": 39.5,
+                  "lon": -98.35,
+                  "noRepeat": false,
+                  "zoom": 3.8
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-3": {
+        "kind": "Panel",
+        "spec": {
+          "id": 3,
+          "title": "Eviction Rate by County (US, 2017)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffuz9ssbn8um8e"
+                      },
+                      "spec": {
+                        "dataset": "neondb",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS eviction_filing_rate\nFROM counties c\nJOIN county_metrics m ON m.fips = c.fips\nWHERE m.metric = 'eviction_filing_rate' AND m.year = 2017",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "geomap",
+            "version": "13.2.0-31683987170",
+            "spec": {
+              "options": {
+                "basemap": {
+                  "config": {},
+                  "name": "Layer 0",
+                  "noRepeat": false,
+                  "type": "default"
+                },
+                "controls": {
+                  "mouseWheelZoom": true,
+                  "showAttribution": true,
+                  "showDebug": false,
+                  "showMeasure": false,
+                  "showScale": false,
+                  "showZoom": true
+                },
+                "layers": [
+                  {
+                    "config": {
+                      "rules": [
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "eviction_filing_rate",
+                            "value": 3.5
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#C4162A"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "eviction_filing_rate",
+                            "value": 2.5
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#FA6400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "eviction_filing_rate",
+                            "value": 1.5
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#E0B400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        }
+                      ],
+                      "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries-us.geojson",
+                      "style": {
+                        "color": {
+                          "fixed": "#ccccdc"
+                        },
+                        "opacity": 0.7,
+                        "rotation": {
+                          "fixed": 0,
+                          "max": 360,
+                          "min": -360,
+                          "mode": "mod"
+                        },
+                        "size": {
+                          "fixed": 5,
+                          "max": 15,
+                          "min": 2
+                        },
+                        "symbol": {
+                          "fixed": "img/icons/marker/circle.svg",
+                          "mode": "fixed"
+                        },
+                        "symbolAlign": {
+                          "horizontal": "center",
+                          "vertical": "center"
+                        },
+                        "textConfig": {
+                          "fontSize": 12,
+                          "offsetX": 0,
+                          "offsetY": 0,
+                          "textAlign": "center",
+                          "textBaseline": "middle"
+                        }
+                      }
+                    },
+                    "location": {
+                      "latitude": "lat",
+                      "longitude": "lon",
+                      "mode": "coords"
+                    },
+                    "name": "Layer 1",
+                    "tooltip": true,
+                    "type": "geojson"
+                  }
+                ],
+                "tooltip": {
+                  "mode": "details"
+                },
+                "view": {
+                  "allLayers": true,
+                  "dashboardVariable": false,
+                  "id": "coords",
+                  "lat": 39.5,
+                  "lon": -98.35,
+                  "noRepeat": false,
+                  "zoom": 3.8
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-4": {
+        "kind": "Panel",
+        "spec": {
+          "id": 4,
+          "title": "Food Desert Population Share by County (US, 2019)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffuz9ssbn8um8e"
+                      },
+                      "spec": {
+                        "dataset": "neondb",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS food_desert_population_share\nFROM counties c\nJOIN county_metrics m ON m.fips = c.fips\nWHERE m.metric = 'food_desert_population_share' AND m.year = 2019",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "geomap",
+            "version": "13.2.0-31683987170",
+            "spec": {
+              "options": {
+                "basemap": {
+                  "config": {},
+                  "name": "Layer 0",
+                  "noRepeat": false,
+                  "type": "default"
+                },
+                "controls": {
+                  "mouseWheelZoom": true,
+                  "showAttribution": true,
+                  "showDebug": false,
+                  "showMeasure": false,
+                  "showScale": false,
+                  "showZoom": true
+                },
+                "layers": [
+                  {
+                    "config": {
+                      "rules": [
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "food_desert_population_share",
+                            "value": 25
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#C4162A"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "food_desert_population_share",
+                            "value": 10
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#FA6400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "food_desert_population_share",
+                            "value": 2
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#E0B400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        }
+                      ],
+                      "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries-us.geojson",
+                      "style": {
+                        "color": {
+                          "fixed": "#ccccdc"
+                        },
+                        "opacity": 0.7,
+                        "rotation": {
+                          "fixed": 0,
+                          "max": 360,
+                          "min": -360,
+                          "mode": "mod"
+                        },
+                        "size": {
+                          "fixed": 5,
+                          "max": 15,
+                          "min": 2
+                        },
+                        "symbol": {
+                          "fixed": "img/icons/marker/circle.svg",
+                          "mode": "fixed"
+                        },
+                        "symbolAlign": {
+                          "horizontal": "center",
+                          "vertical": "center"
+                        },
+                        "textConfig": {
+                          "fontSize": 12,
+                          "offsetX": 0,
+                          "offsetY": 0,
+                          "textAlign": "center",
+                          "textBaseline": "middle"
+                        }
+                      }
+                    },
+                    "location": {
+                      "latitude": "lat",
+                      "longitude": "lon",
+                      "mode": "coords"
+                    },
+                    "name": "Layer 1",
+                    "tooltip": true,
+                    "type": "geojson"
+                  }
+                ],
+                "tooltip": {
+                  "mode": "details"
+                },
+                "view": {
+                  "allLayers": true,
+                  "dashboardVariable": false,
+                  "id": "coords",
+                  "lat": 39.5,
+                  "lon": -98.35,
+                  "noRepeat": false,
+                  "zoom": 3.8
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-5": {
+        "kind": "Panel",
+        "spec": {
+          "id": 5,
+          "title": "CO2 Emissions by County (US, 2022)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "ffuz9ssbn8um8e"
+                      },
+                      "spec": {
+                        "dataset": "neondb",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT c.name, c.lat, c.lon, m.value AS co2_emissions_total_kt FROM counties c \nJOIN county_metrics m ON m.fips = c.fips WHERE m.metric = 'co2_emissions_total_kt' AND m.year = 2022",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "geomap",
+            "version": "13.2.0-31683987170",
+            "spec": {
+              "options": {
+                "basemap": {
+                  "config": {},
+                  "name": "Layer 0",
+                  "noRepeat": false,
+                  "type": "default"
+                },
+                "controls": {
+                  "mouseWheelZoom": true,
+                  "showAttribution": true,
+                  "showDebug": false,
+                  "showMeasure": false,
+                  "showScale": false,
+                  "showZoom": true
+                },
+                "layers": [
+                  {
+                    "config": {
+                      "rules": [
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "co2_emissions_total_kt",
+                            "value": 4500
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#C4162A"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "co2_emissions_total_kt",
+                            "value": 1900
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#FA6400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
+                            "operation": "gte",
+                            "property": "co2_emissions_total_kt",
+                            "value": 680
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#E0B400"
+                            },
+                            "opacity": 0.4,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        }
+                      ],
+                      "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries-us.geojson",
+                      "style": {
+                        "color": {
+                          "fixed": "#FFF899"
+                        },
+                        "opacity": 0.7,
+                        "rotation": {
+                          "fixed": 0,
+                          "max": 360,
+                          "min": -360,
+                          "mode": "mod"
+                        },
+                        "size": {
+                          "fixed": 5,
+                          "max": 15,
+                          "min": 2
+                        },
+                        "symbol": {
+                          "fixed": "img/icons/marker/circle.svg",
+                          "mode": "fixed"
+                        },
+                        "symbolAlign": {
+                          "horizontal": "center",
+                          "vertical": "center"
+                        },
+                        "textConfig": {
+                          "fontSize": 12,
+                          "offsetX": 0,
+                          "offsetY": 0,
+                          "textAlign": "center",
+                          "textBaseline": "middle"
+                        }
+                      }
+                    },
+                    "location": {
+                      "latitude": "lat",
+                      "longitude": "lon",
+                      "mode": "coords"
+                    },
+                    "name": "Layer 1",
+                    "tooltip": true,
+                    "type": "geojson"
+                  }
+                ],
+                "tooltip": {
+                  "mode": "details"
+                },
+                "view": {
+                  "allLayers": true,
+                  "dashboardVariable": false,
+                  "id": "coords",
+                  "lat": 39.5,
+                  "lon": -98.35,
+                  "noRepeat": false,
+                  "zoom": 3.8
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "GridLayout",
+      "spec": {
+        "items": [
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-1"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-3"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 8,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-2"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 8,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-4"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 16,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-5"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [],
+    "liveNow": false,
+    "preload": false,
+    "tags": [],
+    "timeSettings": {
+      "timezone": "browser",
+      "from": "now-6h",
+      "to": "now",
+      "autoRefresh": "",
+      "autoRefreshIntervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0
+    },
+    "title": "County Level Poverty Cooccurrence Metrics, United States",
+    "variables": [],
+    "preferences": {
+      "layout": {
+        "kind": "GridLayout",
+        "spec": {
+          "items": []
+        }
+      }
+    }
+  }
+}
