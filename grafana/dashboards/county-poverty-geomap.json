@@ -5,8 +5,8 @@
     "name": "kixs4xh",
     "namespace": "stacks-1773172",
     "uid": "748fb2f0-7f5e-46be-b346-5c94b15a29c4",
-    "resourceVersion": "2089828706122620928",
-    "generation": 18,
+    "resourceVersion": "2089837233386868736",
+    "generation": 27,
     "creationTimestamp": "2026-08-12T17:41:24Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "2428692632035328"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:dfux3r7oevfuob",
       "grafana.app/saved-from-ui": "Grafana Cloud",
       "grafana.app/updatedBy": "user:dfux3r7oevfuob",
-      "grafana.app/updatedTimestamp": "2026-08-18T21:36:05Z"
+      "grafana.app/updatedTimestamp": "2026-08-18T22:09:58Z"
     }
   },
   "spec": {
@@ -243,7 +243,7 @@
                       "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries.geojson",
                       "style": {
                         "color": {
-                          "fixed": "#FFF899"
+                          "fixed": "#ccccdc"
                         },
                         "opacity": 0.7,
                         "rotation": {
@@ -525,7 +525,7 @@
                       "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries.geojson",
                       "style": {
                         "color": {
-                          "fixed": "#FFF899"
+                          "fixed": "#ccccdc"
                         },
                         "opacity": 0.7,
                         "rotation": {
@@ -807,7 +807,7 @@
                       "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries.geojson",
                       "style": {
                         "color": {
-                          "fixed": "#FFF899"
+                          "fixed": "#ccccdc"
                         },
                         "opacity": 0.7,
                         "rotation": {
@@ -1089,7 +1089,7 @@
                       "src": "https://raw.githubusercontent.com/kirstengillam/county-poverty-co-occurrence/main/boundaries/county-boundaries.geojson",
                       "style": {
                         "color": {
-                          "fixed": "#FFF899"
+                          "fixed": "#ccccdc"
                         },
                         "opacity": 0.7,
                         "rotation": {
@@ -1550,7 +1550,7 @@
       "hideTimepicker": false,
       "fiscalYearStartMonth": 0
     },
-    "title": "County Poverty",
+    "title": "County Level Poverty Cooccurrence Metrics",
     "variables": [],
     "preferences": {
       "layout": {
