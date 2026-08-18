@@ -44,6 +44,15 @@ def test_fetch_filters_to_state_and_converts_tc_to_tco2(tmp_path, monkeypatch):
     assert row["value"] == pytest.approx(1000.0 * (44 / 12) / 1000)
 
 
+def test_fetch_returns_every_state_when_none(tmp_path, monkeypatch):
+    monkeypatch.setattr(vulcan_co2, "DATA_RAW_DIR", tmp_path)
+    (tmp_path / vulcan_co2.COUNTY_XLSX_FILENAME).write_bytes(_fake_xlsx_bytes())
+
+    df = vulcan_co2.fetch(state_fips=None)
+
+    assert set(df["fips"]) == {"06001", "06003", "36001"}
+
+
 def test_fetch_downloads_when_not_cached(tmp_path, monkeypatch):
     monkeypatch.setattr(vulcan_co2, "DATA_RAW_DIR", tmp_path)
 

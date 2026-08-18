@@ -22,9 +22,14 @@ YEAR = 2019
 tracer = trace.get_tracer(__name__)
 
 
-def fetch(state_fips: str) -> pd.DataFrame:
-    """Tract-level food access indicators from USDA's Food Access Research Atlas, filtered to state_fips."""
-    with tracer.start_as_current_span("etl.food_access.fetch", attributes={"state_fips": state_fips}) as span:
+def fetch(state_fips: str | None) -> pd.DataFrame:
+    """Tract-level food access indicators from USDA's Food Access Research Atlas.
+
+    Pass a 2-digit state FIPS to filter to one state, or None for every state.
+    """
+    with tracer.start_as_current_span(
+        "etl.food_access.fetch", attributes={"state_fips": state_fips or "all"}
+    ) as span:
         zip_path = DATA_RAW_DIR / FARA_ZIP_FILENAME
         span.set_attribute("cached", zip_path.exists())
         if not zip_path.exists():
@@ -39,8 +44,9 @@ def fetch(state_fips: str) -> pd.DataFrame:
         # Tract GEOID is state(2) + county(3) + tract(6); slicing it gives the county FIPS
         # directly, so no spatial join is needed to roll tracts up to counties.
         df["fips"] = df["CensusTract"].str.zfill(11).str[:5]
-        result = df.loc[df["fips"].str[:2] == state_fips, ["fips", "Pop2010", "LILATracts_1And10"]]
-        result = result.reset_index(drop=True)
+        if state_fips is not None:
+            df = df[df["fips"].str[:2] == state_fips]
+        result = df[["fips", "Pop2010", "LILATracts_1And10"]].reset_index(drop=True)
         span.set_attribute("row_count", len(result))
         return result
 

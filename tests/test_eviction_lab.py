@@ -36,3 +36,12 @@ def test_fetch_downloads_when_not_cached(tmp_path, monkeypatch):
     mock_get.assert_called_once()
     assert (tmp_path / eviction_lab.COURT_ISSUED_FILENAME).exists()
     assert len(df) == 2
+
+
+def test_fetch_returns_every_state_when_none(tmp_path, monkeypatch):
+    monkeypatch.setattr(eviction_lab, "DATA_RAW_DIR", tmp_path)
+    (tmp_path / eviction_lab.COURT_ISSUED_FILENAME).write_text(FAKE_CSV)
+
+    df = eviction_lab.fetch(state_fips=None, year=2017)
+
+    assert set(df["fips"]) == {"06001", "06003", "04001"}

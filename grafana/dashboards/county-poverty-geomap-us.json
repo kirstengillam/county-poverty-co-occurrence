@@ -115,7 +115,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "poverty_rate",
-                            "value": 20
+                            "value": 18
                           },
                           "style": {
                             "color": {
@@ -154,7 +154,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "poverty_rate",
-                            "value": 15
+                            "value": 14
                           },
                           "style": {
                             "color": {
@@ -193,7 +193,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "poverty_rate",
-                            "value": 10
+                            "value": 11
                           },
                           "style": {
                             "color": {
@@ -397,7 +397,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "unemployment_rate",
-                            "value": 10
+                            "value": 4.5
                           },
                           "style": {
                             "color": {
@@ -436,7 +436,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "unemployment_rate",
-                            "value": 7
+                            "value": 3.5
                           },
                           "style": {
                             "color": {
@@ -475,7 +475,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "unemployment_rate",
-                            "value": 4
+                            "value": 2.5
                           },
                           "style": {
                             "color": {
@@ -679,7 +679,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "eviction_filing_rate",
-                            "value": 3.5
+                            "value": 4.5
                           },
                           "style": {
                             "color": {
@@ -718,7 +718,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "eviction_filing_rate",
-                            "value": 2.5
+                            "value": 2.75
                           },
                           "style": {
                             "color": {
@@ -961,7 +961,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "food_desert_population_share",
-                            "value": 25
+                            "value": 30
                           },
                           "style": {
                             "color": {
@@ -1000,7 +1000,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "food_desert_population_share",
-                            "value": 10
+                            "value": 13
                           },
                           "style": {
                             "color": {
@@ -1243,7 +1243,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "co2_emissions_total_kt",
-                            "value": 4500
+                            "value": 1250
                           },
                           "style": {
                             "color": {
@@ -1282,7 +1282,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "co2_emissions_total_kt",
-                            "value": 1900
+                            "value": 400
                           },
                           "style": {
                             "color": {
@@ -1321,7 +1321,7 @@
                           "check": {
                             "operation": "gte",
                             "property": "co2_emissions_total_kt",
-                            "value": 680
+                            "value": 165
                           },
                           "style": {
                             "color": {

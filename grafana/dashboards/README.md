@@ -7,7 +7,7 @@ Two dashboard files, both derived from the same panel/query structure but scoped
 | File | Scope | Status |
 |---|---|---|
 | `county-poverty-geomap-california.json` | California (58 counties) | Live in Grafana Cloud; all 5 panels have real data |
-| `county-poverty-geomap-us.json` | All US counties (3,235) | **Not yet imported into Grafana.** Boundaries exist (`boundaries/county-boundaries-us.geojson`) but no metric data has been loaded nationally — see Current State below before importing |
+| `county-poverty-geomap-us.json` | All US counties (3,235) | **Not yet imported into Grafana.** All 5 fetchers have been run nationally (`python scripts/run_<dataset>.py --nationwide`), boundaries re-baked, and thresholds set from real national quartiles — ready to import, see Current State below |
 
 ## Updating an existing dashboard
 
@@ -30,6 +30,8 @@ To bring a file like this into Grafana for the first time: **Dashboards → New 
 
 Five panels, one per metric, all using the standard/stable GeoJSON layer with manual threshold-based style rules (not the alpha Dynamic GeoJSON layer — see `project.md`'s Known Issues section for why that was abandoned). Each is a separate panel rather than stacked layers on one map, since the project's goal is a **co-occurrence view** — seeing conditions side by side, not toggling between them.
 
+**California file** (`county-poverty-geomap-california.json`):
+
 | Panel | Metric property | Year | Thresholds (`>=` value → color) |
 |---|---|---|---|
 | Poverty Rate by County | `poverty_rate` | 2022 | 20 → red, 15 → orange, 10 → yellow |
@@ -38,13 +40,23 @@ Five panels, one per metric, all using the standard/stable GeoJSON layer with ma
 | Food Desert Population Share by County | `food_desert_population_share` | 2019 | 25 → red, 10 → orange, 2 → yellow |
 | CO2 Emissions by County | `co2_emissions_total_kt` | 2022 | 4500 → red, 1900 → orange, 680 → yellow |
 
-Below each threshold, panels fall through to the layer's default style (green). Thresholds were set from each metric's actual quartile distribution in the loaded CA data at the time, not off any universal scale — they don't carry over between metrics, and won't carry over to national scope either (see below). Re-check `MIN/MAX/AVG` (or quartiles) against fresh data before reusing them.
+**US file** (`county-poverty-geomap-us.json`) — same panels, thresholds set from real national quartiles (`SELECT value FROM county_metrics WHERE metric = ...` across all loaded states), not California's:
+
+| Panel | Metric property | Year | National coverage | Thresholds (`>=` value → color) |
+|---|---|---|---|---|
+| Poverty Rate by County | `poverty_rate` | 2022 | 3,143 / 3,235 counties | 18 → red, 14 → orange, 11 → yellow |
+| Unemployment Rate by County | `unemployment_rate` | 2022 | 3,221 / 3,235 counties | 4.5 → red, 3.5 → orange, 2.5 → yellow |
+| Eviction Rate by County | `eviction_filing_rate` | 2017 | 1,402 / 3,235 counties | 4.5 → red, 2.75 → orange, 1.5 → yellow |
+| Food Desert Population Share by County | `food_desert_population_share` | 2019 | 3,133 / 3,235 counties | 30 → red, 13 → orange, 2 → yellow |
+| CO2 Emissions by County | `co2_emissions_total_kt` | 2022 | 3,133 / 3,235 counties | 1250 → red, 400 → orange, 165 → yellow |
+
+Below each threshold, panels fall through to the layer's default style (green) — including, for the US file, counties with no data at all (rendered as if their value were below every threshold; there's no distinct "no data" style, so a genuinely low value and a missing value look the same). Eviction's national coverage (43%) is much sparser than the rest — expected, see `eviction_lab.fetch`'s docstring: many jurisdictions never had court eviction records collected, not just missing recent years.
+
+Thresholds were set from each metric's own quartile distribution in whichever data was loaded at the time (CA-only for the California file, national for the US file) — they don't carry over between metrics, and don't carry over between the two files either, as the numbers above show (e.g. `co2_emissions_total_kt`'s national "high" threshold, 1250, is barely above CA's national-scale "low" threshold, 680 — California's own large counties skew high relative to the rest of the country). Re-check `MIN`/`MAX`/`AVG`/quartiles against fresh data before reusing any of these numbers elsewhere.
 
 Eviction (2017) and Food Desert (2019) intentionally use different years than the other three (2022) — both sources' data simply doesn't extend that far; see `README.md`'s Running the pipeline section. CO2 Emissions is also the only **total**, not a rate — it reads as "where emissions concentrate," not "emissions per resident," since it isn't normalized by population.
 
 In the California file, the map view (`view.lat`/`view.lon`/`view.zoom` in each panel's `vizConfig`) is a California-scale camera position (`lat: 37.4, lon: -118.5, zoom: 4.87`); in the US file, it's a continental-US position (`lat: 39.5, lon: -98.35, zoom: 3.8`). The panels' SQL queries have no state filter at all in either file — they render whatever's in `counties`/`county_metrics`, and the GeoJSON `src` differs only by which boundaries file it points to (`county-boundaries.geojson` vs. `county-boundaries-us.geojson`). So the queries themselves never needed to change for the US copy.
-
-**What did *not* change for the US file, and needs to before it's actually useful:** thresholds. Every threshold on every panel is still the exact same number tuned against California's quartiles. Postgres has no metrics loaded for any state but CA, so there was no real national distribution to tune against yet — importing `county-poverty-geomap-us.json` as-is today would render 3,177 non-CA counties with no data (default/no-data style) and CA's counties correctly. Once the five fetchers are re-run without a state filter and the national boundaries are re-baked with real metric values, re-pull `MIN`/`MAX`/`AVG` per metric nationally and update thresholds before treating this dashboard as done — the same rule that's applied to every panel so far (see the table above).
 
 ## Adding a new Geomap layer for another metric
 

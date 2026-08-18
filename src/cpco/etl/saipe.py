@@ -14,15 +14,18 @@ VARIABLES = {
 tracer = trace.get_tracer(__name__)
 
 
-def fetch(state_fips: str, year: int) -> pd.DataFrame:
-    """Poverty rate & median household income from Census SAIPE, keyed by fips/metric/year/value/source."""
+def fetch(state_fips: str | None, year: int) -> pd.DataFrame:
+    """Poverty rate & median household income from Census SAIPE, keyed by fips/metric/year/value/source.
+
+    Pass a 2-digit state FIPS to filter to one state, or None for every state.
+    """
     with tracer.start_as_current_span(
-        "etl.saipe.fetch", attributes={"state_fips": state_fips, "year": year}
+        "etl.saipe.fetch", attributes={"state_fips": state_fips or "all", "year": year}
     ) as span:
         params = {
             "get": f"NAME,{','.join(VARIABLES)}",
             "for": "county:*",
-            "in": f"state:{state_fips}",
+            "in": f"state:{state_fips or '*'}",
             "time": year,
             "key": CENSUS_API_KEY,
         }

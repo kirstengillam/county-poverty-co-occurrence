@@ -1,39 +1,42 @@
 from pathlib import Path
 
-from cpco.config import TARGET_STATE_FIPS
+from cpco.cli import resolve_state_fips
 from cpco.db.connection import get_engine
 from cpco.db.load import fetch_metrics_wide_latest, init_schema, upsert_counties
 from cpco.etl import boundaries
 from cpco.telemetry.otel import configure_tracing
 
 BOUNDARIES_DIR = Path(__file__).resolve().parents[1] / "boundaries"
-PLAIN_OUT_PATH = BOUNDARIES_DIR / "county-boundaries-plain.geojson"
-BAKED_OUT_PATH = BOUNDARIES_DIR / "county-boundaries.geojson"
 
 tracer = configure_tracing()
 
 
 def main() -> None:
-    with tracer.start_as_current_span("run_boundaries", attributes={"state_fips": TARGET_STATE_FIPS}):
-        gdf = boundaries.fetch(state_fips=TARGET_STATE_FIPS)
+    state_fips = resolve_state_fips()
+    suffix = "-us" if state_fips is None else ""
+    plain_out_path = BOUNDARIES_DIR / f"county-boundaries{suffix}-plain.geojson"
+    baked_out_path = BOUNDARIES_DIR / f"county-boundaries{suffix}.geojson"
+
+    with tracer.start_as_current_span("run_boundaries", attributes={"state_fips": state_fips or "all"}):
+        gdf = boundaries.fetch(state_fips=state_fips)
 
         engine = get_engine()
         init_schema(engine)
         upsert_counties(gdf, engine)
-        print(f"Loaded {len(gdf)} county centroids for state {TARGET_STATE_FIPS} into Postgres")
+        print(f"Loaded {len(gdf)} county centroids for state {state_fips or 'all'} into Postgres")
 
-        PLAIN_OUT_PATH.unlink(missing_ok=True)
-        boundaries.to_geojson(gdf, str(PLAIN_OUT_PATH))
-        print(f"Wrote {len(gdf)} plain county boundaries (no baked values) to {PLAIN_OUT_PATH}")
+        plain_out_path.unlink(missing_ok=True)
+        boundaries.to_geojson(gdf, str(plain_out_path))
+        print(f"Wrote {len(gdf)} plain county boundaries (no baked values) to {plain_out_path}")
 
         metrics_df = fetch_metrics_wide_latest(engine)
         gdf_baked = gdf.merge(metrics_df, on="fips", how="left")
 
-        BAKED_OUT_PATH.unlink(missing_ok=True)
-        boundaries.to_geojson(gdf_baked, str(BAKED_OUT_PATH))
+        baked_out_path.unlink(missing_ok=True)
+        boundaries.to_geojson(gdf_baked, str(baked_out_path))
         print(
-            f"Wrote {len(gdf_baked)} county boundaries for state {TARGET_STATE_FIPS} "
-            f"(each metric using its own latest loaded year) to {BAKED_OUT_PATH}"
+            f"Wrote {len(gdf_baked)} county boundaries for state {state_fips or 'all'} "
+            f"(each metric using its own latest loaded year) to {baked_out_path}"
         )
 
 

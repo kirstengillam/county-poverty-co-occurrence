@@ -32,6 +32,15 @@ def test_fetch_filters_to_state(tmp_path, monkeypatch):
     assert set(df["fips"]) == {"06001", "06003"}
 
 
+def test_fetch_returns_every_state_when_none(tmp_path, monkeypatch):
+    monkeypatch.setattr(food_access, "DATA_RAW_DIR", tmp_path)
+    (tmp_path / food_access.FARA_ZIP_FILENAME).write_bytes(_fake_zip_bytes())
+
+    df = food_access.fetch(state_fips=None)
+
+    assert set(df["fips"]) == {"06001", "06003", "04001"}
+
+
 def test_fetch_downloads_when_not_cached(tmp_path, monkeypatch):
     monkeypatch.setattr(food_access, "DATA_RAW_DIR", tmp_path)
 

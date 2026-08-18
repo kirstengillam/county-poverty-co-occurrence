@@ -1,4 +1,3 @@
-from cpco.config import TARGET_STATE_FIPS
 from cpco.db.connection import get_engine
 from cpco.db.load import fetch_county_fips, init_schema, upsert_metrics
 from cpco.etl import laus
@@ -8,7 +7,10 @@ tracer = configure_tracing()
 
 
 def main(year: int = 2022) -> None:
-    with tracer.start_as_current_span("run_laus", attributes={"state_fips": TARGET_STATE_FIPS, "year": year}):
+    # Unlike the other fetchers, LAUS has no state_fips of its own to filter on - it just
+    # queries BLS for whatever county FIPS codes are already in the counties table. So its
+    # scope always follows run_boundaries.py's, run with or without --nationwide.
+    with tracer.start_as_current_span("run_laus", attributes={"year": year}):
         engine = get_engine()
         init_schema(engine)
 
@@ -18,7 +20,7 @@ def main(year: int = 2022) -> None:
 
         df = laus.fetch(fips_codes=fips_codes, year=year)
         upsert_metrics(df, engine)
-        print(f"Loaded {len(df)} rows for state {TARGET_STATE_FIPS}, year {year}")
+        print(f"Loaded {len(df)} rows for {len(fips_codes)} counties, year {year}")
 
 
 if __name__ == "__main__":

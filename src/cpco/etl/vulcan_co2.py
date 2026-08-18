@@ -42,12 +42,16 @@ YEAR = 2022  # most recent year in the source, matching SAIPE/LAUS
 tracer = trace.get_tracer(__name__)
 
 
-def fetch(state_fips: str) -> pd.DataFrame:
+def fetch(state_fips: str | None) -> pd.DataFrame:
     """Official county-level total CO2 emissions (kilotons/year) from Vulcan's own pre-aggregated
     file, keyed by fips/metric/year/value/source. Unlike this project's other metrics, this is a
     total, not a rate - county size and industrial activity drive it, not just population.
+
+    Pass a 2-digit state FIPS to filter to one state, or None for every state.
     """
-    with tracer.start_as_current_span("etl.vulcan_co2.fetch", attributes={"state_fips": state_fips}) as span:
+    with tracer.start_as_current_span(
+        "etl.vulcan_co2.fetch", attributes={"state_fips": state_fips or "all"}
+    ) as span:
         xlsx_path = DATA_RAW_DIR / COUNTY_XLSX_FILENAME
         span.set_attribute("cached", xlsx_path.exists())
         if not xlsx_path.exists():
@@ -60,7 +64,7 @@ def fetch(state_fips: str) -> pd.DataFrame:
         df = df.dropna(subset=["FIPS"])  # drops the national-total footer row
         df["fips"] = df["FIPS"].astype(int).astype(str).str.zfill(5)
 
-        state_df = df[df["fips"].str[:2] == state_fips]
+        state_df = df if state_fips is None else df[df["fips"].str[:2] == state_fips]
         result = pd.DataFrame(
             {
                 "fips": state_df["fips"],
