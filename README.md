@@ -1,10 +1,10 @@
 # County Poverty Co-Occurrence Dashboard
 
-🚧 **Work in progress.** SAIPE (poverty rate + median household income), LAUS (unemployment rate), and county boundaries are live end-to-end, from fetch through Postgres/GeoJSON, and the pipeline is instrumented with OpenTelemetry. A first Grafana Geomap layer (poverty rate) is built. Still to build: additional Geomap layers and the remaining datasets (Eviction Lab, Food Access, Vulcan CO2). See [project.md](project.md) for the full brief, dataset list, and build sequence — the steps below reflect what's actually implemented today.
+🚧 **Work in progress.** SAIPE (poverty rate + median household income), LAUS (unemployment rate), Eviction Lab (eviction filing rate), and county boundaries are live end-to-end, from fetch through Postgres/GeoJSON, and the pipeline is instrumented with OpenTelemetry. Two Grafana Geomap layers (poverty rate, unemployment rate) are built. Still to build: an eviction-rate Geomap layer and the remaining datasets (Food Access, Vulcan CO2) — both of which need tract/raster→county aggregation, unlike the three direct-fetch datasets already done. See [project.md](project.md) for the full brief, dataset list, and build sequence — the steps below reflect what's actually implemented today.
 
 ## Layout
 
-- `src/cpco/etl/` — one fetcher per data source (SAIPE, LAUS, Eviction Lab, Food Access Atlas, Vulcan CO2, TIGER/Line boundaries). SAIPE, LAUS, and boundaries are implemented; Eviction Lab, Food Access, and Vulcan CO2 are still stubs.
+- `src/cpco/etl/` — one fetcher per data source (SAIPE, LAUS, Eviction Lab, Food Access Atlas, Vulcan CO2, TIGER/Line boundaries). SAIPE, LAUS, Eviction Lab, and boundaries are implemented; Food Access and Vulcan CO2 are still stubs.
 - `src/cpco/db/` — Postgres connection, schema (`county_metrics`, keyed by FIPS), and load/upsert helpers
 - `src/cpco/telemetry/` — OpenTelemetry tracer setup, exported to Grafana Cloud
 - `scripts/` — runnable entrypoints tying ETL + DB load together, one per dataset
@@ -31,6 +31,8 @@ Then fill in `.env`:
 - `CENSUS_API_KEY` — required by the SAIPE fetch; register at [api.census.gov/data/key_signup.html](https://api.census.gov/data/key_signup.html) and activate via the confirmation email before use
 - `BLS_API_KEY` — required by the LAUS fetch; register at [data.bls.gov/registrationEngine](https://data.bls.gov/registrationEngine/) (registered keys allow up to 50 series per request, vs. 25 unregistered — needed since a state's counties can exceed that)
 
+No env var is needed for Eviction Lab. The county-level file it needs lives in the `eviction-lab-data-downloads` S3 bucket ([browsable at data-downloads.evictionlab.org](https://data-downloads.evictionlab.org/)), which is public and ODC-BY 1.0 licensed — `eviction_lab.py` fetches it directly over plain HTTPS, no key or auth required. (The email-gated form at [evictionlab.org/get-the-data](https://evictionlab.org/get-the-data/) is a separate, older marketing page for the same lab that happens to link to this bucket — it's how this file was discovered, but it's not in the actual fetch path.)
+
 - `OTEL_EXPORTER_OTLP_ENDPOINT`/`OTEL_EXPORTER_OTLP_HEADERS` — optional; point these at your Grafana Cloud OTLP endpoint to export traces there. Left blank, spans print to the console instead, which is enough to confirm instrumentation is working locally.
 
 ## Tests
@@ -43,20 +45,22 @@ Tests run against an in-memory SQLite engine, so they don't need Postgres.
 
 ## Running the pipeline
 
-Two datasets are wired up end-to-end so far: SAIPE (poverty rate + median household income) and LAUS (unemployment rate). Both fetch from their source API and upsert into Postgres keyed by `(fips, metric, year)`. Boundaries (TIGER/Line, converted to GeoJSON for Grafana Geomap) ties them together — it populates the `counties` table other scripts depend on, and bakes whatever's currently in `county_metrics` into the GeoJSON Grafana reads.
+Three datasets are wired up end-to-end so far: SAIPE (poverty rate + median household income), LAUS (unemployment rate), and Eviction Lab (eviction filing rate). Each fetches from its source and upserts into Postgres keyed by `(fips, metric, year)`. Boundaries (TIGER/Line, converted to GeoJSON for Grafana Geomap) ties them together — it populates the `counties` table other scripts depend on, and bakes the latest loaded value of every metric into the GeoJSON Grafana reads.
 
 **Run order matters.** `run_boundaries.py` needs to run once before `run_laus.py` (to populate `counties`), and again after any metrics script to refresh the baked GeoJSON with the latest values — Grafana reads the static file, not Postgres directly, so nothing shows up on the dashboard until you re-bake:
 
 ```bash
-python scripts/run_boundaries.py   # 1. bootstrap counties table + plain GeoJSON
-python scripts/run_saipe.py        # 2. load poverty_rate, median_household_income
-python scripts/run_laus.py         # 3. load unemployment_rate (needs counties table from step 1)
-python scripts/run_boundaries.py   # 4. re-run to bake all current metric values into the GeoJSON
+python scripts/run_boundaries.py     # 1. bootstrap counties table + plain GeoJSON
+python scripts/run_saipe.py          # 2. load poverty_rate, median_household_income
+python scripts/run_laus.py           # 3. load unemployment_rate (needs counties table from step 1)
+python scripts/run_eviction_lab.py   # 4. load eviction_filing_rate
+python scripts/run_boundaries.py     # 5. re-run to bake all current metric values into the GeoJSON
 ```
 
-- `run_saipe.py` — creates the `county_metrics` table if it doesn't exist and loads one row per county per metric for `TARGET_STATE_FIPS`. Prints `Loaded N rows for state ...` on success (confirmed against Neon: 116 rows for CA — 58 counties x 2 metrics).
-- `run_laus.py` — queries the BLS API for the annual-average unemployment rate for every county in the `counties` table (one BLS series ID per county, batched to stay under the API's 50-series-per-request limit) and upserts into `county_metrics`. Confirmed against Neon: 58 rows for CA.
-- `run_boundaries.py` — downloads the national TIGER/Line county file (~80MB, cached in `data/raw/` after the first run), filters to `TARGET_STATE_FIPS`, upserts county centroids into the `counties` table, and writes both `boundaries/county-boundaries-plain.geojson` (no metric values) and `boundaries/county-boundaries.geojson` (current metric values baked in as feature properties).
+- `run_saipe.py` — creates the `county_metrics` table if it doesn't exist and loads one row per county per metric for `TARGET_STATE_FIPS`. Prints `Loaded N rows for state ...` on success (confirmed against Neon: 116 rows for CA — 58 counties x 2 metrics, year 2022).
+- `run_laus.py` — queries the BLS API for the annual-average unemployment rate for every county in the `counties` table (one BLS series ID per county, batched to stay under the API's 50-series-per-request limit) and upserts into `county_metrics`. Confirmed against Neon: 58 rows for CA, year 2022.
+- `run_eviction_lab.py` — reads eviction filing counts and renting-household counts from Eviction Lab's [public data downloads](https://data-downloads.evictionlab.org/) (cached in `data/raw/` after the first run, like the TIGER file), computes filing rate (`filings / renting households × 100`) per county, and upserts. Defaults to **2017**, not 2022 — Eviction Lab's source file only covers 2000-2018, and 2017 is the most recent year with data for every CA county. Confirmed against Neon: 58 rows for CA.
+- `run_boundaries.py` — downloads the national TIGER/Line county file (~80MB, cached in `data/raw/` after the first run), filters to `TARGET_STATE_FIPS`, upserts county centroids into the `counties` table, and writes both `boundaries/county-boundaries-plain.geojson` (no metric values) and `boundaries/county-boundaries.geojson` (baked-in feature properties). Each metric is baked using **its own latest loaded year** (`db.load.fetch_metrics_wide_latest`) rather than one fixed year — necessary once Eviction Lab (2017) coexists with SAIPE/LAUS (2022); a single fixed year would silently drop any metric not loaded for that year.
 
 All scripts are safe to rerun — they upsert rather than duplicate rows.
 
@@ -73,10 +77,10 @@ with get_engine().connect() as conn:
 
 ### Adding a new dataset
 
-SAIPE and LAUS are both county-direct (no aggregation needed), so they're the template for the next easy dataset (Eviction Lab). Food Access Atlas and Vulcan CO2 need tract→county or raster→county aggregation first — see `project.md`'s Architecture section — but land in Postgres the same way once aggregated. The pattern:
+SAIPE, LAUS, and Eviction Lab are all county-direct (no aggregation needed) and follow the same shape, so they're the template for datasets like this. Food Access Atlas and Vulcan CO2 — the two remaining stubs — need tract→county or raster→county aggregation first (see `project.md`'s Architecture section), but land in Postgres the same way once aggregated. The pattern:
 
-1. Implement `fetch(...)` in `src/cpco/etl/<dataset>.py`, returning a `DataFrame` with columns `fips, metric, year, value, source` (see `saipe.py` or `laus.py`).
-2. Write `tests/test_<dataset>.py` mocking the HTTP call, asserting the returned frame's shape and a couple of values (see `tests/test_laus.py`).
-3. Add `scripts/run_<dataset>.py` that calls `init_schema`, the new `fetch(...)`, then `upsert_metrics(df, engine)` — copy `run_laus.py` as a starting point.
+1. Implement `fetch(...)` in `src/cpco/etl/<dataset>.py`, returning a `DataFrame` with columns `fips, metric, year, value, source` (see `saipe.py` for a live API fetch, or `eviction_lab.py` for a cached-static-file fetch — pick whichever matches the source).
+2. Write `tests/test_<dataset>.py` mocking the HTTP call, asserting the returned frame's shape and a couple of values (see `tests/test_laus.py` or `tests/test_eviction_lab.py`).
+3. Add `scripts/run_<dataset>.py` that calls `init_schema`, the new `fetch(...)`, then `upsert_metrics(df, engine)` — copy `run_laus.py` or `run_eviction_lab.py` as a starting point.
 4. Add any new required env var (API key, etc.) to `.env.example` and this README's Setup section.
-5. Re-run `python scripts/run_boundaries.py` afterward to bake the new metric into the GeoJSON.
+5. Re-run `python scripts/run_boundaries.py` afterward to bake the new metric into the GeoJSON — no need to worry about which year the new dataset lands at, `fetch_metrics_wide_latest` picks each metric's own latest year automatically.

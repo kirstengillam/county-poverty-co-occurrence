@@ -67,3 +67,24 @@ def fetch_metrics_wide(engine: Engine, year: int) -> pd.DataFrame:
                 params={"year": year},
             )
         return long_df.pivot(index="fips", columns="metric", values="value").reset_index()
+
+
+def fetch_metrics_wide_latest(engine: Engine) -> pd.DataFrame:
+    """One row per fips, one column per metric, each using that metric's own most recent year.
+
+    Datasets land at different years (e.g. SAIPE/LAUS at 2022, Eviction Lab at 2017 - its
+    source only covers through 2018), so there's no single year that covers every metric.
+    """
+    with tracer.start_as_current_span("db.fetch_metrics_wide_latest"):
+        with engine.connect() as conn:
+            long_df = pd.read_sql(
+                text(
+                    """
+                    SELECT fips, metric, value
+                    FROM county_metrics cm
+                    WHERE year = (SELECT MAX(year) FROM county_metrics WHERE metric = cm.metric)
+                    """
+                ),
+                conn,
+            )
+        return long_df.pivot(index="fips", columns="metric", values="value").reset_index()
