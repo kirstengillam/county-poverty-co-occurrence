@@ -124,6 +124,45 @@
                       "rules": [
                         {
                           "check": {
+                            "operation": "eq",
+                            "property": "poverty_rate",
+                            "value": null
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#8E8E8E"
+                            },
+                            "opacity": 0,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
                             "operation": "gte",
                             "property": "poverty_rate",
                             "value": 20
@@ -404,6 +443,45 @@
                   {
                     "config": {
                       "rules": [
+                        {
+                          "check": {
+                            "operation": "eq",
+                            "property": "unemployment_rate",
+                            "value": null
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#8E8E8E"
+                            },
+                            "opacity": 0,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
                         {
                           "check": {
                             "operation": "gte",
@@ -688,6 +766,45 @@
                       "rules": [
                         {
                           "check": {
+                            "operation": "eq",
+                            "property": "eviction_filing_rate",
+                            "value": null
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#8E8E8E"
+                            },
+                            "opacity": 0,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
                             "operation": "gte",
                             "property": "eviction_filing_rate",
                             "value": 3.5
@@ -970,6 +1087,45 @@
                       "rules": [
                         {
                           "check": {
+                            "operation": "eq",
+                            "property": "food_desert_population_share",
+                            "value": null
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#8E8E8E"
+                            },
+                            "opacity": 0,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
+                        {
+                          "check": {
                             "operation": "gte",
                             "property": "food_desert_population_share",
                             "value": 25
@@ -1250,6 +1406,45 @@
                   {
                     "config": {
                       "rules": [
+                        {
+                          "check": {
+                            "operation": "eq",
+                            "property": "co2_emissions_total_kt",
+                            "value": null
+                          },
+                          "style": {
+                            "color": {
+                              "fixed": "#8E8E8E"
+                            },
+                            "opacity": 0,
+                            "rotation": {
+                              "fixed": 0,
+                              "max": 360,
+                              "min": -360,
+                              "mode": "mod"
+                            },
+                            "size": {
+                              "fixed": 5,
+                              "max": 15,
+                              "min": 2
+                            },
+                            "symbol": {
+                              "fixed": "img/icons/marker/circle.svg",
+                              "mode": "fixed"
+                            },
+                            "symbolAlign": {
+                              "horizontal": "center",
+                              "vertical": "center"
+                            },
+                            "textConfig": {
+                              "fontSize": 12,
+                              "offsetX": 0,
+                              "offsetY": 0,
+                              "textAlign": "center",
+                              "textBaseline": "middle"
+                            }
+                          }
+                        },
                         {
                           "check": {
                             "operation": "gte",

@@ -6,7 +6,7 @@ Two dashboard files, both derived from the same panel/query structure but scoped
 
 | File | Scope | Status |
 |---|---|---|
-| `county-poverty-geomap-california.json` | California (58 counties) | Live in Grafana Cloud; all 5 panels have real data |
+| `county-poverty-geomap-california.json` | California (58 counties) | Live in Grafana Cloud, but the checked-in file has a pending update (null-data transparency rules, see Current State) not yet pushed via Settings → JSON Model |
 | `county-poverty-geomap-us.json` | All US counties (3,235) | **Not yet imported into Grafana.** All 5 fetchers have been run nationally (`python scripts/run_<dataset>.py --nationwide`), boundaries re-baked, and thresholds set from real national quartiles — ready to import, see Current State below |
 
 ## Updating an existing dashboard
@@ -50,7 +50,11 @@ Five panels, one per metric, all using the standard/stable GeoJSON layer with ma
 | Food Desert Population Share by County | `food_desert_population_share` | 2019 | 3,133 / 3,235 counties | 30 → red, 13 → orange, 2 → yellow |
 | CO2 Emissions by County | `co2_emissions_total_kt` | 2022 | 3,133 / 3,235 counties | 1250 → red, 400 → orange, 165 → yellow |
 
-Below each threshold, panels fall through to the layer's default style (green) — including, for the US file, counties with no data at all (rendered as if their value were below every threshold; there's no distinct "no data" style, so a genuinely low value and a missing value look the same). Eviction's national coverage (43%) is much sparser than the rest — expected, see `eviction_lab.fetch`'s docstring: many jurisdictions never had court eviction records collected, not just missing recent years.
+Below the lowest threshold, panels fall through to the layer's default style (green). Counties with **no data at all** (no row in `county_metrics` for that metric — not the same as a real value of `0`) get a dedicated rule instead: `{operation: "eq", property: "<metric>", value: null}`, styled at `opacity: 0` (fully transparent), so gaps read as "nothing here" rather than blending into the lowest real-data color. This rule is listed first in each layer's `rules` array, ahead of the threshold checks.
+
+This works because of how Grafana's rule engine (`compareValues.ts`) actually treats `null`: a missing GeoJSON property is normalized to a special null marker before comparing, and `null` only equals `null` — it is never `>=`/`<=`/`==` a real number, including `0`. So a real `0` (e.g. `food_desert_population_share = 0` for a dense urban county with no low-access tracts, or a genuine `0%` eviction filing rate for a small county) correctly still matches the normal threshold rules and renders with its real color; only a truly absent value matches the null rule. Confirmed against Grafana's own source rather than assumed, given this file's history of silent JSON bugs — see [`checkFeatureMatchesStyleRule.ts`](https://github.com/grafana/grafana/blob/main/public/app/plugins/panel/geomap/utils/checkFeatureMatchesStyleRule.ts) and [`compareValues.ts`](https://github.com/grafana/grafana/blob/main/packages/grafana-data/src/transformations/matchers/compareValues.ts).
+
+Eviction's national coverage (43%) is much sparser than the rest — expected, see `eviction_lab.fetch`'s docstring: many jurisdictions never had court eviction records collected, not just missing recent years. That's exactly the kind of gap the null rule now makes visible on the map instead of silently coloring those counties as if they had a low (but real) eviction rate.
 
 Thresholds were set from each metric's own quartile distribution in whichever data was loaded at the time (CA-only for the California file, national for the US file) — they don't carry over between metrics, and don't carry over between the two files either, as the numbers above show (e.g. `co2_emissions_total_kt`'s national "high" threshold, 1250, is barely above CA's national-scale "low" threshold, 680 — California's own large counties skew high relative to the rest of the country). Re-check `MIN`/`MAX`/`AVG`/quartiles against fresh data before reusing any of these numbers elsewhere.
 
@@ -65,7 +69,7 @@ Every metric baked into `boundaries/county-boundaries.geojson` is available as a
 1. Copy an existing panel's block in `spec.elements` (e.g. `panel-5`), give it a new key (e.g. `panel-6`) and a new `spec.id`.
 2. Retitle it to `<Metric Name> by County (<scope>, <year>)`.
 3. Update its SQL query: `SELECT c.name, c.lat, c.lon, m.value AS <metric> FROM counties c JOIN county_metrics m ON m.fips = c.fips WHERE m.metric = '<metric>' AND m.year = <year>`. The map's fill color doesn't actually depend on this query (it reads the GeoJSON's baked properties directly), but the tooltip/data table does, so a stale query silently shows the wrong values on hover.
-4. Update the layer's `rules` — change every rule's `check.property` to the new metric, and rescale `check.value` thresholds to that metric's own range. Pull real `MIN/MAX/AVG`/quartiles from Postgres first rather than guessing or reusing another metric's numbers (see the table above for the pattern).
+4. Update the layer's `rules` — change every rule's `check.property` to the new metric, and rescale `check.value` thresholds to that metric's own range. Pull real `MIN/MAX/AVG`/quartiles from Postgres first rather than guessing or reusing another metric's numbers (see the table above for the pattern). Keep the first rule as the null-data check (`{operation: "eq", property: "<metric>", value: null}`, `opacity: 0`) — just update its `property` too.
 5. Add a `GridLayoutItem` for the new panel in `spec.layout.spec.items`, positioned alongside the others so they render together for visual co-occurrence comparison.
 6. Import via JSON Model (see Updating above), confirm it rendered correctly, then commit.
 
