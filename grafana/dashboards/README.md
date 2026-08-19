@@ -7,7 +7,7 @@ Two dashboard files, both derived from the same panel/query structure but scoped
 | File | Scope | Status |
 |---|---|---|
 | `county-poverty-geomap-california.json` | California (58 counties) | Live in Grafana Cloud, but the checked-in file has a pending update (null-data transparency rules, see Current State) not yet pushed via Settings → JSON Model |
-| `county-poverty-geomap-us.json` | All US counties (3,235) | **Not yet imported into Grafana.** All 5 fetchers have been run nationally (`python scripts/run_<dataset>.py --nationwide`), boundaries re-baked, and thresholds set from real national quartiles — ready to import, see Current State below |
+| `county-poverty-geomap-us.json` | All US counties (3,235) | Live in Grafana Cloud (imported via Dashboards → New → Import) |
 
 ## Updating an existing dashboard
 
