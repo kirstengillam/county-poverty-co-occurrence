@@ -6,8 +6,8 @@ Two dashboard files, both derived from the same panel/query structure but scoped
 
 | File | Scope | Status |
 |---|---|---|
-| `county-poverty-geomap-california.json` | California (58 counties) | Live in Grafana Cloud, but the checked-in file has a pending update (null-data transparency rules, see Current State) not yet pushed via Settings → JSON Model |
-| `county-poverty-geomap-us.json` | All US counties (3,235) | Live in Grafana Cloud (imported via Dashboards → New → Import) |
+| `county-poverty-geomap-california.json` | California (58 counties) | Live in Grafana Cloud, `uid: 10674e15-2161-4ef8-82a9-e04bcf1a5b69` |
+| `county-poverty-geomap-us.json` | All US counties (3,235) | Live in Grafana Cloud, `uid: 748fb2f0-7f5e-46be-b346-5c94b15a29c4` — this is the original dashboard from the very start of this project; the California file above is a later duplicate that got its own separate UID when split off |
 
 ## Updating an existing dashboard
 
